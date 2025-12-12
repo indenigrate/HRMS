@@ -21,8 +21,8 @@ func NewStudentController(svc services.StudentService) *StudentController {
 
 // Register routes under a router group (e.g., /students)
 func (ctl *StudentController) RegisterRoutes(rg *gin.RouterGroup) {
-	rg.POST("/", ctl.CreateStudent)
-	rg.GET("/", ctl.GetAllStudents)
+	rg.POST("", ctl.CreateStudent)
+	rg.GET("", ctl.GetAllStudents)
 	rg.GET("/:id", ctl.GetStudentByID)
 	rg.PUT("/:id", ctl.UpdateStudent)
 	rg.DELETE("/:id", ctl.DeleteStudent)

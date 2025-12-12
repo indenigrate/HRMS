@@ -34,7 +34,7 @@ func ConnectDB() {
 	log.Println("Connected to MySQL Database!")
 
 	// auto create tables if dne
-	if err = DB.AutoMigrate(&models.Student{}); err != nil {
+	if err = DB.AutoMigrate(&models.Student{}, &models.Attendance{}); err != nil {
 		log.Fatalf("❌ Failed to migrate database: %v", err)
 	}
 	log.Println("Database Migrated Successfully!")

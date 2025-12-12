@@ -28,20 +28,22 @@ func main() {
 	// first Repository (Talks to DB)
 	// internal/repository/student_repository.go
 	studentRepo := repository.NewStudentRepository(config.DB)
+	attendanceRepo := repository.NewAttendanceRepository(config.DB)
 
 	// Service (Talks to Repository)
 	// internal/services/student_service.go
 	studentService := services.NewStudentService(studentRepo)
-
+	attendanceService := services.NewAttendanceService(attendanceRepo, studentRepo)
 	// Controller (Talks to Service)
 	// internal/controllers/student_controller.go
 	studentController := controllers.NewStudentController(studentService)
-
+	attendanceController := controllers.NewAttendanceController(attendanceService)
 	// Create : http://localhost:8080/students
 	studentGroup := r.Group("/students")
-
+	attendanceGroup := r.Group("/attendance")
 	// Pass the group to the controller so it can define endpoints
 	studentController.RegisterRoutes(studentGroup)
+	attendanceController.RegisterRoutes(attendanceGroup)
 
 	// 6. Start the server
 	log.Println("Server starting on port 8080...")
