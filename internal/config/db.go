@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"hrms_backend/internal/models"
 	"log"
 	"os"
 
@@ -31,4 +32,10 @@ func ConnectDB() {
 	}
 
 	log.Println("Connected to MySQL Database!")
+
+	// auto create tables if dne
+	if err = DB.AutoMigrate(&models.Student{}); err != nil {
+		log.Fatalf("❌ Failed to migrate database: %v", err)
+	}
+	log.Println("Database Migrated Successfully!")
 }
