@@ -3,7 +3,7 @@ package viewmodels
 import "time"
 
 // when creating a student.
-// In Gin, the `binding:"required"` tags enforce presence of the fields.
+// `binding:"required"` tags enforce presence of the fields.
 type CreateStudentRequest struct {
 	Name       string `json:"name" binding:"required"`
 	Email      string `json:"email" binding:"required,email"`

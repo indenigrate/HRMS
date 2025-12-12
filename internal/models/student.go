@@ -2,6 +2,8 @@ package models
 
 import "gorm.io/gorm"
 
+// define data.
+
 // Student maps to the `students` table.
 type Student struct {
 	gorm.Model
