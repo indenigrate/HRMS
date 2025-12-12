@@ -7,7 +7,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword        
       MYSQL_DATABASE: hrms_db                  
-      MYSQL_USER: hrms_user                    # optional
+      MYSQL_USER: hrms_user                    # optional 
       MYSQL_PASSWORD: hrms_password            # password for MYSQL_USER
     ports:
       - "3306:3306"
