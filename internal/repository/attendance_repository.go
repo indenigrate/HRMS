@@ -2,6 +2,7 @@ package repository
 
 import (
 	"hrms_backend/internal/models"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -9,6 +10,7 @@ import (
 type AttendanceRepository interface {
 	Create(attendance *models.Attendance) error
 	GetAttendanceByStudentID(studentID uint) ([]models.Attendance, error)
+	GetAttendanceSince(date time.Time) ([]models.Attendance, error)
 }
 
 type attendanceRepo struct {
@@ -31,4 +33,11 @@ func (r *attendanceRepo) GetAttendanceByStudentID(studentID uint) ([]models.Atte
 	err := r.db.Preload("Student").Where("student_id = ?", studentID).Find(&attendanceList).Error
 
 	return attendanceList, err
+}
+
+func (r *attendanceRepo) GetAttendanceSince(date time.Time) ([]models.Attendance, error) {
+	var records []models.Attendance
+	// Preload Student to get names for the report
+	err := r.db.Preload("Student").Where("date >= ?", date).Find(&records).Error
+	return records, err
 }

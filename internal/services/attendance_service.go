@@ -5,11 +5,13 @@ import (
 	"hrms_backend/internal/models"
 	"hrms_backend/internal/repository"
 	"hrms_backend/internal/viewmodels"
+	"time"
 )
 
 type AttendanceService interface {
 	MarkAttendance(req viewmodels.CreateAttendanceRequest) error
 	GetAttendanceByStudentID(studentID uint) ([]viewmodels.AttendanceResponse, error)
+	GetWeeklyAttendance() ([]viewmodels.AttendanceResponse, error)
 }
 
 type attendanceService struct {
@@ -76,4 +78,33 @@ func (s *attendanceService) GetAttendanceByStudentID(studentID uint) ([]viewmode
 	}
 
 	return responses, nil
+}
+
+func (s *attendanceService) GetWeeklyAttendance() ([]viewmodels.AttendanceResponse, error) {
+	sevenDaysAgo := time.Now().AddDate(0, 0, -7)
+
+	records, err := s.attRepo.GetAttendanceSince(sevenDaysAgo)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.mapToResponse(records), nil
+}
+
+// to avoid duplication
+func (s *attendanceService) mapToResponse(records []models.Attendance) []viewmodels.AttendanceResponse {
+	responses := make([]viewmodels.AttendanceResponse, 0, len(records))
+	for _, rec := range records {
+		resp := viewmodels.AttendanceResponse{
+			ID:        rec.ID,
+			StudentID: rec.StudentID,
+			Date:      rec.Date,
+			Status:    rec.Status,
+		}
+		if rec.Student.Name != "" {
+			resp.StudentName = rec.Student.Name
+		}
+		responses = append(responses, resp)
+	}
+	return responses
 }

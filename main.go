@@ -5,9 +5,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"github.com/robfig/cron/v3"
 
 	"hrms_backend/internal/config"
 	"hrms_backend/internal/controllers"
+	"hrms_backend/internal/cronJob"
 	"hrms_backend/internal/repository"
 	"hrms_backend/internal/services"
 )
@@ -45,7 +47,19 @@ func main() {
 	studentController.RegisterRoutes(studentGroup)
 	attendanceController.RegisterRoutes(attendanceGroup)
 
-	// 6. Start the server
+	c := cron.New()
+	attendanceCron := cronJob.NewAttendanceCron(attendanceService)
+
+	// Schedule: Run every minute for testing purposes ("@every 1m")
+	// For actual weekly: "@weekly" or "0 0 * * 0" (Sunday midnight)
+	_, err = c.AddFunc("@every 1m", attendanceCron.RunWeeklyReport)
+	if err != nil {
+		log.Fatal("Failed to add cron job:", err)
+	}
+	c.Start()
+	log.Println("⏳ Cron Scheduler started...")
+
+	// Start the server
 	log.Println("Server starting on port 8080...")
 	if err := r.Run(":8080"); err != nil {
 		log.Fatal("Failed to run server: ", err)
