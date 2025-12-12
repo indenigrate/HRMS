@@ -81,6 +81,22 @@ These instructions will get you a copy of the project up and running on your loc
 - `GET /attendance/:student_id`
   - **Description**: Retrieves all attendance records for a specific student.
 
+## API Documentation (Swagger)
+
+This project uses Swagger (OpenAPI) for interactive API documentation.
+
+1.  **Generate Swagger Documentation (if not already generated):**
+    ```sh
+    go run github.com/swaggo/swag/cmd/swag init
+    ```
+2.  **Run the application:**
+    ```sh
+    go run main.go
+    ```
+3.  **Access Documentation:**
+    Once the server is running, open your web browser and navigate to:
+    [http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html)
+
 ## Running Tests
 
 To run the suite of unit tests, execute the following command from the root directory:

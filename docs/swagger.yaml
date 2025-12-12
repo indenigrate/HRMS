@@ -1,0 +1,277 @@
+basePath: /
+definitions:
+  viewmodels.AttendanceResponse:
+    properties:
+      date:
+        type: string
+      id:
+        type: integer
+      status:
+        type: string
+      student_id:
+        type: integer
+      student_name:
+        description: 'Optional: filled if Student is preloaded'
+        type: string
+    type: object
+  viewmodels.CreateAttendanceRequest:
+    properties:
+      date:
+        type: string
+      status:
+        description: oneof validation ensures only valid statuses are accepted
+        enum:
+        - present
+        - absent
+        - late
+        - excused
+        type: string
+      student_id:
+        type: integer
+    required:
+    - date
+    - status
+    - student_id
+    type: object
+  viewmodels.CreateStudentRequest:
+    properties:
+      department:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+    required:
+    - department
+    - email
+    - name
+    type: object
+  viewmodels.ErrorResponse:
+    properties:
+      error:
+        example: a description of the error
+        type: string
+    type: object
+  viewmodels.StudentResponse:
+    properties:
+      created_at:
+        type: string
+      department:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  viewmodels.UpdateStudentRequest:
+    properties:
+      department:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: talhanasir.business@gmail.com
+    name: API Support
+    url: https://www.linkedin.com/in/muhammad-talha-nasir-8a5428219/
+  description: A minimal HRMS API for managing students and their attendance.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: HRMS System API
+  version: "1.0"
+paths:
+  /attendance/{student_id}:
+    get:
+      description: Retrieves all attendance records for a specific student.
+      parameters:
+      - description: Student ID
+        in: path
+        name: student_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/viewmodels.AttendanceResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/viewmodels.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/viewmodels.ErrorResponse'
+      summary: Get attendance by student ID
+      tags:
+      - Attendance
+  /attendance/mark:
+    post:
+      consumes:
+      - application/json
+      description: Marks a student's attendance as 'Present' or 'Absent' for a given
+        date.
+      parameters:
+      - description: Attendance details
+        in: body
+        name: attendance
+        required: true
+        schema:
+          $ref: '#/definitions/viewmodels.CreateAttendanceRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/viewmodels.ErrorResponse'
+      summary: Mark student attendance
+      tags:
+      - Attendance
+  /students:
+    get:
+      description: Retrieves a paginated list of all students.
+      parameters:
+      - description: Page number for pagination
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - description: Number of items per page
+        in: query
+        minimum: 1
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/viewmodels.StudentResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/viewmodels.ErrorResponse'
+      summary: Get all students
+      tags:
+      - Students
+    post:
+      consumes:
+      - application/json
+      description: Creates a new student record in the database.
+      parameters:
+      - description: Student details
+        in: body
+        name: student
+        required: true
+        schema:
+          $ref: '#/definitions/viewmodels.CreateStudentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/viewmodels.StudentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/viewmodels.ErrorResponse'
+      summary: Create a new student
+      tags:
+      - Students
+  /students/{id}:
+    delete:
+      description: Deletes a student from the database by their ID.
+      parameters:
+      - description: Student ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/viewmodels.ErrorResponse'
+      summary: Delete a student
+      tags:
+      - Students
+    get:
+      description: Retrieves the details of a single student by their unique ID.
+      parameters:
+      - description: Student ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/viewmodels.StudentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/viewmodels.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/viewmodels.ErrorResponse'
+      summary: Get a student by ID
+      tags:
+      - Students
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing student's details by their ID.
+      parameters:
+      - description: Student ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated student details
+        in: body
+        name: student
+        required: true
+        schema:
+          $ref: '#/definitions/viewmodels.UpdateStudentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/viewmodels.StudentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/viewmodels.ErrorResponse'
+      summary: Update a student
+      tags:
+      - Students
+swagger: "2.0"
