@@ -8,7 +8,7 @@ import (
 
 type StudentService interface {
 	CreateStudent(req viewmodels.CreateStudentRequest) (*viewmodels.StudentResponse, error)
-	GetAllStudents() ([]viewmodels.StudentResponse, error)
+	GetAllStudents(page, limit int) ([]viewmodels.StudentResponse, error)
 	GetStudentByID(id uint) (*viewmodels.StudentResponse, error)
 	UpdateStudent(id uint, req viewmodels.UpdateStudentRequest) (*viewmodels.StudentResponse, error)
 	DeleteStudent(id uint) error
@@ -52,13 +52,21 @@ func (s *studentService) CreateStudent(req viewmodels.CreateStudentRequest) (*vi
 }
 
 // Get all students
-func (s *studentService) GetAllStudents() ([]viewmodels.StudentResponse, error) {
-	students, err := s.repo.GetAll()
+func (s *studentService) GetAllStudents(page, limit int) ([]viewmodels.StudentResponse, error) {
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 {
+		limit = 10
+	}
+	offset := (page - 1) * limit
+
+	students, err := s.repo.GetAll(limit, offset)
 	if err != nil {
 		return nil, err
 	}
 
-	// Convert to DTO
+	// Map to DTO
 	responses := make([]viewmodels.StudentResponse, 0, len(students))
 	for _, st := range students {
 		responses = append(responses, viewmodels.StudentResponse{
@@ -69,7 +77,6 @@ func (s *studentService) GetAllStudents() ([]viewmodels.StudentResponse, error) 
 			CreatedAt:  st.CreatedAt,
 		})
 	}
-
 	return responses, nil
 }
 

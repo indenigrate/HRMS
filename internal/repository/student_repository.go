@@ -11,7 +11,7 @@ import (
 
 type StudentRepository interface {
 	Create(student *models.Student) error
-	GetAll() ([]models.Student, error)
+	GetAll(limit, offset int) ([]models.Student, error)
 	Update(id uint, student *models.Student) error
 	GetByID(id uint) (*models.Student, error)
 	Delete(id uint) error
@@ -33,9 +33,9 @@ func (r *studentRepo) Create(student *models.Student) error {
 }
 
 // Get all students
-func (r *studentRepo) GetAll() ([]models.Student, error) {
+func (r *studentRepo) GetAll(limit, offset int) ([]models.Student, error) {
 	var students []models.Student
-	err := r.db.Find(&students).Error
+	err := r.db.Limit(limit).Offset(offset).Find(&students).Error
 	return students, err
 }
 

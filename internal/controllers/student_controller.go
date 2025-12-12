@@ -48,7 +48,11 @@ func (ctl *StudentController) CreateStudent(c *gin.Context) {
 
 // GET /students
 func (ctl *StudentController) GetAllStudents(c *gin.Context) {
-	responses, err := ctl.service.GetAllStudents()
+	// Parse Query Params with defaults
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+
+	responses, err := ctl.service.GetAllStudents(page, limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
