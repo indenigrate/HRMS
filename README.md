@@ -29,8 +29,8 @@ These instructions will get you a copy of the project up and running on your loc
 
 1.  **Clone the repository:**
     ```sh
-    git clone https://github.com/your-username/your-repo-name.git
-    cd your-repo-name
+    git clone https://github.com/indenigrate/HRMS.git
+    cd HRMS
     ```
 
 2.  **Start the database:**
@@ -47,7 +47,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 4.  **Run the application:**
     ```sh
-    go run main.go
+    go run .
     ```
     The server will start on `http://localhost:8080`.
 
